@@ -19,10 +19,10 @@ Clone the repo to your desired location
 - `git clone <url>`
 
 Initialise your virtual environment (recommended)
-- `python -m venv env`
+- `python -m venv <venv>`
 
 For Windows, in your project dir
-- `env\Scripts\activate.bat`
+- `<venv>\Scripts\activate.bat`
 
 For Linux, in your project dir
 - `source <venv>/bin/activate`
