@@ -13,3 +13,21 @@ The program must meet the following requirements
 - Pycodestyle
 - Pylint
 - Pytest (80% test code coverage)
+
+## How To Run
+Clone the repo to your desired location
+- `git clone <url>`
+
+Initialise your virtual environment (recommended)
+- `python -m venv env`
+
+For Windows, in your project dir
+- `env\Scripts\activate.bat`
+
+For Linux, in your project dir
+- `source <venv>/bin/activate`
+
+Install the requirements
+- `pip install -r requirements.txt`
+
+😀 You should be good to go! 😀
