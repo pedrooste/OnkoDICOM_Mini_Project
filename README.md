@@ -31,3 +31,9 @@ Install the requirements
 - `pip install -r requirements.txt`
 
 😀 You should be good to go! 😀
+
+## Common commands
+Run a pytest
+- `python -m pytest test/`  
+Run pylint
+- `pylint -m <filename.py>`
