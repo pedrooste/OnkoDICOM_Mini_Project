@@ -1,2 +1,2 @@
-PySide6==6.1.2
+PySide6==6.1.2readme
 shiboken6==6.1.2
