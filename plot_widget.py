@@ -31,6 +31,7 @@ class PlotWidget(QWidget):
         #  Create widgets
         self.view = FigureCanvasQTAgg(Figure(figsize=(5, 5)))
         self.axes = self.view.figure.subplots()
+        self.axes.axis('off')
         self.button = QPushButton("Select")
         self.input = QSpinBox()
 
@@ -38,10 +39,10 @@ class PlotWidget(QWidget):
         input_layout = QHBoxLayout()
         input_layout.addWidget(self.button)
         input_layout.addWidget(self.input)
-        vlayout = QVBoxLayout()
-        vlayout.addWidget(self.view)
-        vlayout.addLayout(input_layout)
-        self.setLayout(vlayout)
+        vertical_layout = QVBoxLayout()
+        vertical_layout.addWidget(self.view)
+        vertical_layout.addLayout(input_layout)
+        self.setLayout(vertical_layout)
 
         # Connect button with on_click method
         self.button.clicked.connect(self.on_click)
@@ -63,12 +64,12 @@ class PlotWidget(QWidget):
         self.view.draw()
 
 
-PATHS = 0
+PATHS = None
 if __name__ == "__main__":
     # The dir where the dcm files are stored
     PATHS = glob.glob(r"E:\CSIT321\OnkoDICOM_Mini_Project\dcm\*.dcm")
 
     app = QApplication(sys.argv)
-    w = PlotWidget()
-    w.show()
+    window = PlotWidget()
+    window.show()
     sys.exit(app.exec())
