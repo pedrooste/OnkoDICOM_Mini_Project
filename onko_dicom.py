@@ -1,4 +1,3 @@
-# pylint: disable=unnecessary-lambda
 """
 This file starts up the QT hello world window with some basic functionality
 """
