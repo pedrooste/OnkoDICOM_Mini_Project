@@ -22,7 +22,7 @@ if __name__ == "__main__":
     example_settings_table = """CREATE TABLE IF NOT EXISTS SETTINGS (
                                     id integer PRIMARY KEY,
                                     setting text NOT NULL,
-                                    state integer, NOT NULL
+                                    state integer NOT NULL
                                 );"""
 
     # Testing database connection
@@ -34,6 +34,10 @@ if __name__ == "__main__":
     else:
         print("Error failed to connect to database")
 
+    #test = (1, "Test Setting", 1)
+    
+    #sqliteconnection.create_task(connection, test) #state == 1 == true
+    
     widget.show()
 
     sys.exit(app.exec())
