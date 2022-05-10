@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     widget = MyWidget()
     widget.resize(800, 600)
-    
+
 
     example_settings_table = """CREATE TABLE IF NOT EXISTS SETTINGS (
                                     id integer PRIMARY KEY,
@@ -35,10 +35,9 @@ if __name__ == "__main__":
         print("Error failed to connect to database")
 
     #test = (1, "Test Setting", 1)
-    
+
     #sqliteconnection.create_task(connection, test) #state == 1 == true
-    
+
     widget.show()
 
     sys.exit(app.exec())
-    
