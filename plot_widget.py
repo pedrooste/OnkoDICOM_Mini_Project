@@ -3,9 +3,8 @@ Integrates pydicom, matplotlib and PySide6 together
 """
 
 import logging
+import os
 import sys
-
-import matplotlib.axes
 import pydicom
 import pydicom.data
 from matplotlib import pyplot as plt
@@ -16,6 +15,10 @@ from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
 )
+
+LOG_FILES_DIR = 'logs'
+if not os.path.isdir(LOG_FILES_DIR):
+    os.makedirs(LOG_FILES_DIR)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

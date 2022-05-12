@@ -13,6 +13,10 @@ from PySide6.QtWidgets import (
 )
 import plot_widget
 
+LOG_FILES_DIR = 'logs'
+if not os.path.isdir(LOG_FILES_DIR):
+    os.makedirs(LOG_FILES_DIR)
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
