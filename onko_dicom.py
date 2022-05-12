@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QFileDialog
 )
 import plot_widget
+import pydicom
 
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -84,10 +85,19 @@ class OnkoDicom(QMainWindow):
             logger.info("open_file user canceled open operation")
             return
 
-        self.plot_w.plot_dcm(full_path[0])
-        self.close_action.setEnabled(True)
+        try:
+            logger.info("Attempting to graph/open file")
+            self.plot_w.plot_dcm(full_path[0])
+            self.close_action.setEnabled(True)
+            logger.info("successfully opened graph/file")
 
-        logger.info("open_file completed within OnkoDicom")
+        except pydicom.errors.InvalidDicomError as err:
+            logger.error(f"InvalidDicomError, Missing Dicom Header. Error:({err})")
+        except AttributeError as err:
+            logger.error(f"AttributeError, Missing Attribute. Error:({err})")
+        except Exception as err:
+            logger.error(f"Error:({err})")
+
 
     def close_file(self):
         """Clears the file from the view"""
