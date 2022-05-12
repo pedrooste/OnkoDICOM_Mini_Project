@@ -5,27 +5,26 @@ import pytest
 from plot_widget import PlotWidget
 
 
-class TestPlotWidget:
+@pytest.fixture
+def test_app(qtbot):
     """
-    Encapsulates the test suite for plot_widget.py
+    Sets up widget for testing
     """
-    @pytest.fixture
-    def test_app(self):
-        """
-        Sets up widget for testing
-        """
-        test_app = PlotWidget()
+    test_app = PlotWidget()
+    qtbot.addWidget(test_app)
 
-        return test_app
+    return test_app
 
-    def test_plot_dcm(self, test_app):
-        """
-        Tests plot_widget test_plot_dcm function
-        """
-        assert test_app.plot_dcm("test files/DICOM-RT-01/CT_3_Hashed.dcm")
 
-    def test_clear_view(self, test_app):
-        """
-        Tests plot_widget test_clear_view function
-        """
-        assert test_app.clear_view()
+def test_plot_dcm(test_app):
+    """
+    Tests plot_widget test_plot_dcm function
+    """
+    assert test_app.plot_dcm("test files/DICOM-RT-01/CT_3_Hashed.dcm")
+
+
+def test_clear_view(test_app):
+    """
+    Tests plot_widget test_clear_view function
+    """
+    assert test_app.clear_view()
