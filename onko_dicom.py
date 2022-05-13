@@ -92,11 +92,11 @@ class OnkoDicom(QMainWindow):
             logger.info("successfully opened graph/file")
 
         except pydicom.errors.InvalidDicomError as err:
-            logger.error(f"InvalidDicomError, Missing Dicom Header. Error:({err})")
+            logger.error("InvalidDicomError, Missing Dicom Header. Error:(%s)", err)
         except AttributeError as err:
-            logger.error(f"AttributeError, Missing Attribute. Error:({err})")
+            logger.error("AttributeError, Missing Attribute. Error:(%s)", err)
         except Exception as err:
-            logger.error(f"Error:({err})")
+            logger.error("Error:(%s)", err)
 
 
     def close_file(self):
