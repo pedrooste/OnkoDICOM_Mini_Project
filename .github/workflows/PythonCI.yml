@@ -20,11 +20,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r pre-requirements.txt
         pip install -r requirements.txt
+        pip install --editable .[dev]
+        pre-commit install
     - name: Test with pytest
       run: |
         pip install pytest
         pip install pytest-cov
-        pytest tests/test_plot_widget.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        tox -e py37-pyside2,py37-pyqt5
+#        pytest tests/test_plot_widget.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
     - name: Linting with pylint
       run: |
         pip install pylint
