@@ -20,8 +20,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r pre-requirements.txt
         pip install -r requirements.txt
-        pip install --editable .[dev]
-        pre-commit install
     - name: Test with pytest
       run: |
         pip install pytest
