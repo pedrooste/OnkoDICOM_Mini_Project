@@ -4,6 +4,9 @@ pydicom.errors.InvalidDicomError: File is missing DICOM File Meta Information he
 Only header:
 AttributeError: 'FileMetaDataset' object has no attribute 'TransferSyntaxUID'
 
+NotImplementedError:
+NotImplementedError: Unable to decode pixel data with a transfer syntax UIDas there are no pixel data handlers available that support it.
+
 
 
 
