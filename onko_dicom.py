@@ -85,17 +85,17 @@ class OnkoDicom(QMainWindow):
         self.plot_w.set_paths(paths)
         self.close_action.setEnabled(True)
         try:
-            logger.info("Attempting to graph/open file")
+            logger.info("Attempting to graph/open file (%s)", full_path[0])
             self.plot_w.plot_dcm(full_path[0])
             self.close_action.setEnabled(True)
-            logger.info("successfully opened graph/file")
+            logger.info("successfully opened graph/file (%s)", full_path[0])
 
         except pydicom.errors.InvalidDicomError as err:
-            logger.error("InvalidDicomError, Missing Dicom Header. Error:(%s)", err)
+            logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", full_path[0], err)
         except AttributeError as err:
-            logger.error("AttributeError, Missing Attribute. Error:(%s)", err)
+            logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", full_path[0], err)
         except Exception as err:
-            logger.error("Error:(%s)", err)
+            logger.error("(%s): Error:(%s)", full_path[0], err)
 
 
     def close_file(self):
