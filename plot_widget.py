@@ -64,6 +64,21 @@ class PlotWidget(QWidget):
         logger.info("plot_dcm completed within PlotWidget")
         return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
 
+    def force_plot_dcm(self, path):
+        """
+        Force plots the dcm file in the axes and view
+        """
+        logger.info("plot_dcm started within PlotWidget")
+
+        data_source = pydicom.dcmread(path, force=True)
+        self.axes.clear()
+        self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
+        self.axes.set_title(path.rsplit('/', 1)[1])
+        self.view.draw()
+
+        logger.info("plot_dcm completed within PlotWidget")
+        return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
+
     def clear_view(self):
         """
         Clears the axes and view
