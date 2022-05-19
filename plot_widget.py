@@ -106,7 +106,6 @@ class PlotWidget(QWidget):
 
             logger.info("plot_dcm completed within PlotWidget")
             return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
-            logger.info("successfully opened graph/file (%s)", path)
 
         except pydicom.errors.InvalidDicomError as err:
             logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", path, err)
