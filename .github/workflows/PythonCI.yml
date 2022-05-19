@@ -14,23 +14,39 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.8'
-        cache: 'pip'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r pre-requirements.txt
         pip install -r requirements.txt
         sudo apt-get update
-        sudo apt-get install freeglut3 freeglut3-dev libxcb-xinerama0 pyqt5-dev-tools -y
-    - name: Test with pytest
+        sudo apt-get install freeglut3 freeglut3-dev -y
+        sudo apt-get install -y xvfb x11-utils libxkbcommon-x11-0
+        pip install pyside2 pytest coverage pytest-qt
+    - name: Test
       env:
         QT_DEBUG_PLUGINS: 1
       run: |
-        pip install pytest
-        pip install pytest-cov
-        pytest "tests/test_plot_widget.py"
-#        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
-    - name: Linting with pylint
+        ulimit -c unlimited
+        sudo catchsegv xvfb-run --auto-servernum `which coverage` run -m pytest
+    - name: chmod
+      if: always()
       run: |
-        pip install pylint
-        pylint --rcfile=.pylintrc $(git ls-files '*.py')
+        if [[ -d "$DIRECTORY" ]]; then
+          sudo chmod -R +rwx /var/crash
+        fi
+    - name: Upload artifacts
+      if: always()
+      uses: actions/upload-artifact@master
+      with:
+        name: crashes
+        path: /var/crash
+#    - name: Test with pytest
+#      run: |
+#        pip install pytest
+#        pip install pytest-cov
+#        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
+#    - name: Linting with pylint
+#      run: |
+#        pip install pylint
+#        pylint --rcfile=.pylintrc $(git ls-files '*.py')
