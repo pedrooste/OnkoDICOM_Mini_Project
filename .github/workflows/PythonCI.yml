@@ -21,7 +21,7 @@ jobs:
         pip install -r pre-requirements.txt
         pip install -r requirements.txt
         sudo apt-get update
-        sudo apt-get install libgl1 -y
+        sudo apt-get install freeglut3 freeglut3-dev -y
     - name: Test with pytest
       run: |
         pip install pytest
