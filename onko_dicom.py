@@ -14,6 +14,9 @@ from PySide6.QtWidgets import (
 )
 import plot_widget
 from resources.settings import load_settings
+from resources.sqlite_logger import SQLiteHandler
+from resources.sqlite_logger import getLogLevel
+
 
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -22,10 +25,17 @@ if not os.path.isdir(LOG_FILES_DIR):
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
-file_handler = logging.FileHandler('logs/onko_dicom.log', mode='w')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
+sql_handler = SQLiteHandler(database="logs.db")
+sql_handler.setLevel(logging.INFO)
+logging.getLogger().addHandler(sql_handler)
+
+
+log_info = getLogLevel()
+
+# formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
+# file_handler = logging.FileHandler('logs/onko_dicom.log', mode='w')
+# file_handler.setFormatter(formatter)
+# logger.addHandler(file_handler)
 
 
 class OnkoDicom(QMainWindow):
@@ -34,7 +44,8 @@ class OnkoDicom(QMainWindow):
     """
     def __init__(self):
         super().__init__()
-        logger.info("Initialising OnkoDicom")
+        if log_info:
+            logger.info("Initialising OnkoDicom")
 
         self.close_action = None
         self.open_action = None
@@ -46,12 +57,13 @@ class OnkoDicom(QMainWindow):
 
         self.plot_w = plot_widget.PlotWidget()
         self.setCentralWidget(self.plot_w)
-
-        logger.info("Initialising OnkoDicom completed")
+        if log_info:
+            logger.info("Initialising OnkoDicom completed")
 
     def create_menu(self):
         """Menu bar displayed at the top of the page"""
-        logger.info("Initialising Menu within OnkoDicom")
+        if log_info:
+            logger.info("Initialising Menu within OnkoDicom")
 
         main_menu = self.menuBar()
         file_menu = main_menu.addMenu("File")
@@ -66,11 +78,13 @@ class OnkoDicom(QMainWindow):
         file_menu.addAction(self.open_action)
         file_menu.addAction(self.close_action)
 
-        logger.info("Initialised Menu within OnkoDicom")
+        if log_info:
+            logger.info("Initialised Menu within OnkoDicom")
 
     def open_dir(self):
         """Opens a file import window"""
-        logger.info("open_dir started within OnkoDicom")
+        if log_info:
+            logger.info("open_dir started within OnkoDicom")
 
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         files = os.path.join(directory, "*.dcm").replace("\\", "/")
@@ -78,27 +92,31 @@ class OnkoDicom(QMainWindow):
 
         # If user cancels open, path is empty
         if not paths:
-            logger.info("open_dir user canceled open operation")
+            if log_info:
+                logger.info("open_dir user canceled open operation")
             return
 
         self.plot_w.set_paths(paths)
         self.close_action.setEnabled(True)
 
-        logger.info("open_dir completed within OnkoDicom")
+        if log_info:
+            logger.info("open_dir completed within OnkoDicom")
 
     def close_file(self):
         """Clears the file from the view"""
-        logger.info("close_file started within OnkoDicom")
+        if log_info:
+            logger.info("close_file started within OnkoDicom")
 
         self.plot_w.clear_view()
         self.close_action.setEnabled(False)
 
-        logger.info("close_file completed within OnkoDicom")
+        if log_info:
+            logger.info("close_file completed within OnkoDicom")
 
 
 if __name__ == "__main__":
     settings = load_settings(1)
-
+    
     app = QtWidgets.QApplication([])
     OnkoDicom()
     sys.exit(app.exec())

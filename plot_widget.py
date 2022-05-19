@@ -15,6 +15,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QSlider
 )
+from resources.sqlite_logger import SQLiteHandler
+from resources.sqlite_logger import getLogLevel
 
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -23,10 +25,17 @@ if not os.path.isdir(LOG_FILES_DIR):
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
-file_handler = logging.FileHandler('logs/plot_widget.log', mode='w')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
+sql_handler = SQLiteHandler(database="logs.db")
+sql_handler.setLevel(logging.INFO)
+logging.getLogger().addHandler(sql_handler)
+
+log_info = getLogLevel()
+
+
+# formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
+# file_handler = logging.FileHandler('logs/plot_widget.log', mode='w')
+# file_handler.setFormatter(formatter)
+# logger.addHandler(file_handler)
 
 
 class PlotWidget(QWidget):
@@ -35,7 +44,8 @@ class PlotWidget(QWidget):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-        logger.info("Initialising PlotWidget")
+        if log_info:
+            logger.info("Initialising PlotWidget")
 
         #  Create widgets
         self.view = FigureCanvasQTAgg(Figure(figsize=(5, 5)))
@@ -62,7 +72,8 @@ class PlotWidget(QWidget):
         # Paths var
         self.paths = None
 
-        logger.info("Initialising PlotWidget complete")
+        if log_info:
+            logger.info("Initialising PlotWidget complete")
 
     def update_plot(self, value):
         """
@@ -74,7 +85,8 @@ class PlotWidget(QWidget):
         """
         Set the paths of the dcm files in the parsed dir
         """
-        logger.info("set_paths started within PlotWidget")
+        if log_info:
+            logger.info("set_paths started within PlotWidget")
         self.paths = paths
 
         # Parse 1 to plot the first dcm file
@@ -84,7 +96,8 @@ class PlotWidget(QWidget):
         self.slider.setEnabled(True)
         self.slider.setMaximum(len(self.paths))
 
-        logger.info("set_paths completed within PlotWidget")
+        if log_info:
+            logger.info("set_paths completed within PlotWidget")
 
         return bool(self.paths)
 
@@ -92,7 +105,8 @@ class PlotWidget(QWidget):
         """
         Plots the dcm file in the axes and view
         """
-        logger.info("plot_dcm started within PlotWidget")
+        if log_info:
+            logger.info("plot_dcm started within PlotWidget")
 
         path = self.paths[value-1]
 
@@ -102,14 +116,16 @@ class PlotWidget(QWidget):
         self.axes.set_title(path.rsplit('/', 1)[1])
         self.view.draw()
 
-        logger.info("plot_dcm completed within PlotWidget")
+        if log_info:
+            logger.info("plot_dcm completed within PlotWidget")
         return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
 
     def clear_view(self):
         """
         Clears the axes and view
         """
-        logger.info("clear_view started within PlotWidget")
+        if log_info:
+            logger.info("clear_view started within PlotWidget")
 
         self.slider.setEnabled(False)
         self.slider.setValue(1)
@@ -117,5 +133,6 @@ class PlotWidget(QWidget):
         self.axes.axis('off')
         self.view.draw()
 
-        logger.info("clear_view completed within PlotWidget")
+        if log_info:
+            logger.info("clear_view completed within PlotWidget")
         return self.axes.axis() == (0.0, 1.0, 0.0, 1.0)
