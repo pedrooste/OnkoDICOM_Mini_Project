@@ -21,13 +21,12 @@ jobs:
         pip install -r pre-requirements.txt
         pip install -r requirements.txt
         sudo apt-get update
-        sudo apt-get install freeglut3 freeglut3-dev -y
-#        sudo apt-get install ffmpeg libsm6 libxext6 libopengl0 -y
+        sudo apt-get install libgl1 freeglut3 freeglut3-dev -y
     - name: Test with pytest
       run: |
         pip install pytest
         pip install pytest-cov
-        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
     - name: Linting with pylint
       run: |
         pip install pylint
