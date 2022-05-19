@@ -4,16 +4,16 @@ Integrates pydicom, matplotlib and PySide6 together
 
 import logging
 import os
-import sys
 import pydicom
 import pydicom.data
+from PySide6.QtCore import Qt
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PySide6.QtWidgets import (
-    QApplication,
     QWidget,
     QVBoxLayout,
+    QSlider
 )
 
 LOG_FILES_DIR = 'logs'
@@ -41,19 +41,60 @@ class PlotWidget(QWidget):
         self.view = FigureCanvasQTAgg(Figure(figsize=(5, 5)))
         self.axes = self.view.figure.subplots()
         self.axes.axis('off')  # same as set_axis_off()
+        self.slider = QSlider(Qt.Horizontal)
 
         #  Create layout
         vertical_layout = QVBoxLayout()
         vertical_layout.addWidget(self.view)
+        vertical_layout.addWidget(self.slider)
         self.setLayout(vertical_layout)
+
+        # Disable slider
+        self.slider.setEnabled(False)
+
+        # Default min and max
+        self.slider.setMinimum(1)
+        self.slider.setMaximum(1)
+
+        # Connect slider
+        self.slider.valueChanged.connect(self.update_plot)
+
+        # Paths var
+        self.paths = None
 
         logger.info("Initialising PlotWidget complete")
 
-    def plot_dcm(self, path):
+    def update_plot(self, value):
+        """
+        Updates the plot whenever the slider's value is changed
+        """
+        return self.plot_dcm(value)
+
+    def set_paths(self, paths):
+        """
+        Set the paths of the dcm files in the parsed dir
+        """
+        logger.info("set_paths started within PlotWidget")
+        self.paths = paths
+
+        # Parse 1 to plot the first dcm file
+        self.plot_dcm(1)
+
+        # Update slider
+        self.slider.setEnabled(True)
+        self.slider.setMaximum(len(self.paths))
+
+        logger.info("set_paths completed within PlotWidget")
+
+        return bool(self.paths)
+
+    def plot_dcm(self, value):
         """
         Plots the dcm file in the axes and view
         """
         logger.info("plot_dcm started within PlotWidget")
+
+        path = self.paths[value-1]
 
         data_source = pydicom.dcmread(path)
         self.axes.clear()
@@ -70,16 +111,11 @@ class PlotWidget(QWidget):
         """
         logger.info("clear_view started within PlotWidget")
 
+        self.slider.setEnabled(False)
+        self.slider.setValue(1)
         self.axes.clear()
         self.axes.axis('off')
         self.view.draw()
 
         logger.info("clear_view completed within PlotWidget")
         return self.axes.axis() == (0.0, 1.0, 0.0, 1.0)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = PlotWidget()
-    window.show()
-    sys.exit(app.exec())
