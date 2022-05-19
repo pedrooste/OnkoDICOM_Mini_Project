@@ -20,7 +20,7 @@ def test_plot_dcm(test_app):
     """
     Tests plot_widget test_plot_dcm function
     """
-    assert test_app.plot_dcm("tests/test files/DICOM-RT-01/CT_3_Hashed.dcm")
+    assert test_app.plot_dcm("test/test files/DICOM-RT-01/CT_3_Hashed.dcm")
 
 
 def test_clear_view(test_app):
