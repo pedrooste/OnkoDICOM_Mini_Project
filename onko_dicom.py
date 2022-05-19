@@ -5,6 +5,8 @@ This file starts up the QMainWindow with a custom QtWidget, plot_widget
 import logging
 import os
 import sys
+import pydicom
+import webbrowser
 
 from PySide6 import QtWidgets
 from PySide6.QtGui import QAction
@@ -15,6 +17,7 @@ from PySide6.QtWidgets import (
 )
 import plot_widget
 from resources.settings import load_settings
+
 
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -138,6 +141,7 @@ class OnkoDicom(QMainWindow):
             try:
                 logger.error("(%s): NotImplementedError. Error:(%s)", full_path[0], err)
                 self.err_msg('Error', 'NotImplementedError. \n\nError: ' + ''.join([str(err)]))
+
             except ValueError as err:
                 logger.error("(%s): ValueError. Error:(%s)", full_path[0], err)
                 response = self.err_msg('Error', 'NotImplementedError and ValueError. \n\nError: ' +
@@ -148,7 +152,6 @@ class OnkoDicom(QMainWindow):
                                         + 'Error: ' + ''.join([str(err)])
                                         )
                 if response == 'F':
-                    import webbrowser
                     webbrowser.open('https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html',
                                     new=0, autoraise=True)
                     logger.info("Open pydicom document")

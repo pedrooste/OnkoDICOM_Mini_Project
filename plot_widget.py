@@ -68,15 +68,18 @@ class PlotWidget(QWidget):
         """
         Force plots the dcm file in the axes and view
         """
-        logger.info("plot_dcm started within PlotWidget")
+        logger.info("force_plot_dcm started within PlotWidget")
 
         data_source = pydicom.dcmread(path, force=True)
+        if "TransferSyntaxUID" not in data_source.file_meta:
+            data_source.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+            # pydicom.write_file(path, data_source)
         self.axes.clear()
         self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
         self.axes.set_title(path.rsplit('/', 1)[1])
         self.view.draw()
 
-        logger.info("plot_dcm completed within PlotWidget")
+        logger.info("force_plot_dcm completed within PlotWidget")
         return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
 
     def clear_view(self):

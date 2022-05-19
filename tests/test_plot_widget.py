@@ -23,6 +23,13 @@ def test_plot_dcm(test_app):
     assert test_app.plot_dcm("test files/DICOM-RT-01/CT_3_Hashed.dcm")
 
 
+def test_force_plot_dcm(test_app):
+    """
+    Tests force_plot_widget test_plot_dcm function
+    """
+    assert test_app.force_plot_dcm("test files/FakeDicomFiles/very_old_ct_slice.dcm")
+
+
 def test_clear_view(test_app):
     """
     Tests plot_widget test_clear_view function
