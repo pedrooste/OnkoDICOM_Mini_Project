@@ -21,13 +21,13 @@ jobs:
         pip install -r requirements.txt
         sudo apt-get update
         sudo apt-get install freeglut3 freeglut3-dev -y
-        sudo apt-get install -y xvfb x11-utils libxkbcommon-x11-0
-        pip install pyside2 pytest coverage pytest-qt
+        sudo apt-get install libxcb-xinerama0 -y
     - name: Test with pytest
       run: |
         pip install pytest
         pip install pytest-cov
-        pytest "src/test_sqlite.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
+#        pytest "src/test_sqlite.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
 #        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
     - name: Linting with pylint
       run: |
