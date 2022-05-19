@@ -23,30 +23,13 @@ jobs:
         sudo apt-get install freeglut3 freeglut3-dev -y
         sudo apt-get install -y xvfb x11-utils libxkbcommon-x11-0
         pip install pyside2 pytest coverage pytest-qt
-    - name: Test
-      env:
-        QT_DEBUG_PLUGINS: 1
+    - name: Test with pytest
       run: |
-        ulimit -c unlimited
-        sudo catchsegv xvfb-run --auto-servernum `which coverage` run -m pytest
-    - name: chmod
-      if: always()
-      run: |
-        if [[ -d "$DIRECTORY" ]]; then
-          sudo chmod -R +rwx /var/crash
-        fi
-    - name: Upload artifacts
-      if: always()
-      uses: actions/upload-artifact@master
-      with:
-        name: crashes
-        path: /var/crash
-#    - name: Test with pytest
-#      run: |
-#        pip install pytest
-#        pip install pytest-cov
+        pip install pytest
+        pip install pytest-cov
+        pytest "src/test_sqlite.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
 #        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
-#    - name: Linting with pylint
-#      run: |
-#        pip install pylint
-#        pylint --rcfile=.pylintrc $(git ls-files '*.py')
+    - name: Linting with pylint
+      run: |
+        pip install pylint
+        pylint --rcfile=.pylintrc $(git ls-files '*.py')
