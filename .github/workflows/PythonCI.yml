@@ -23,6 +23,8 @@ jobs:
         sudo apt-get update
         sudo apt-get install freeglut3 freeglut3-dev libxcb-xinerama0 pyqt5-dev-tools -y
     - name: Test with pytest
+      env:
+        QT_DEBUG_PLUGINS: 1
       run: |
         pip install pytest
         pip install pytest-cov
