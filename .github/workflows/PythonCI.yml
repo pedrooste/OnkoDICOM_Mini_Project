@@ -20,13 +20,12 @@ jobs:
         pip install -r pre-requirements.txt
         pip install -r requirements.txt
         sudo apt-get update
-        sudo apt-get install freeglut3 freeglut3-dev -y
-        sudo apt-get install libxcb-xinerama0 -y
+        sudo apt-get install freeglut3 freeglut3-dev libxcb-xinerama0 libxkbcommon-x11-0 -y
     - name: Test with pytest
       run: |
-        pip install pytest
-        pip install pytest-cov
+        pip install pytest pytest-cov pytest-html
         pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
+#        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --html=pytest_report.html --self-contained-html --cov-fail-under=80
 #        pytest "src/test_sqlite.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
 #        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
     - name: Linting with pylint
