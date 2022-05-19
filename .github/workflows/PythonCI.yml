@@ -26,7 +26,8 @@ jobs:
       run: |
         pip install pytest
         pip install pytest-cov
-        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
+        pytest "tests/test_plot_widget.py"
+#        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
     - name: Linting with pylint
       run: |
         pip install pylint
