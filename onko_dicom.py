@@ -59,7 +59,7 @@ class OnkoDicom(QMainWindow):
         self.open_action = QAction("Open Directory", self)
         self.open_action.triggered.connect(lambda: self.open_dir())
 
-        self.close_action = QAction("Close Directory", self)
+        self.close_action = QAction("Close", self)
         self.close_action.triggered.connect(lambda: self.close_file())
         self.close_action.setEnabled(False)
 
@@ -72,11 +72,9 @@ class OnkoDicom(QMainWindow):
         """Opens a file import window"""
         logger.info("open_dir started within OnkoDicom")
 
-        dir = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        # print(dir)
-        files = os.path.join(dir, "*.dcm").replace("\\", "/")
-
-        paths = glob.glob(files)
+        directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        files = os.path.join(directory, "*.dcm").replace("\\", "/")
+        paths = sorted(glob.glob(files))
 
         # If user cancels open, path is empty
         if not paths:
