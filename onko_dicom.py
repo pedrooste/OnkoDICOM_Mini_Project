@@ -5,6 +5,8 @@ This file starts up the QMainWindow with a custom QtWidget, plot_widget
 import logging
 import os
 import sys
+import pydicom
+
 from PySide6 import QtWidgets
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
@@ -12,7 +14,8 @@ from PySide6.QtWidgets import (
     QFileDialog
 )
 import plot_widget
-import pydicom
+from resources.settings import load_settings
+
 
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -37,7 +40,7 @@ class OnkoDicom(QMainWindow):
 
         self.close_action = None
         self.open_action = None
-        self.resize(500, 500)
+        self.resize(settings.window_x, settings.window_y)
         self.show()
 
         self.setWindowTitle("OnkoDICOM 2022 Mini Project")
@@ -110,6 +113,8 @@ class OnkoDicom(QMainWindow):
 
 
 if __name__ == "__main__":
+    settings = load_settings(1)
+
     app = QtWidgets.QApplication([])
     OnkoDicom()
     sys.exit(app.exec())
