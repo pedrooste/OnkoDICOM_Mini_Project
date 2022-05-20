@@ -96,14 +96,24 @@ class PlotWidget(QWidget):
 
         path = self.paths[value-1]
 
-        data_source = pydicom.dcmread(path)
-        self.axes.clear()
-        self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
-        self.axes.set_title(path.rsplit('/', 1)[1])
-        self.view.draw()
+        try:
+            logger.info("Attempting to graph/open file (%s)", path)
+            data_source = pydicom.dcmread(path)
+            self.axes.clear()
+            self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
+            self.axes.set_title(path.rsplit('/', 1)[1])
+            self.view.draw()
 
-        logger.info("plot_dcm completed within PlotWidget")
-        return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
+            logger.info("plot_dcm completed within PlotWidget")
+            return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
+            logger.info("successfully opened graph/file (%s)", path)
+
+        except pydicom.errors.InvalidDicomError as err:
+            logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", path, err)
+        except AttributeError as err:
+            logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
+        except Exception as err:
+            logger.error("(%s): Error:(%s)", path, err)
 
     def force_plot_dcm(self, path):
         """
