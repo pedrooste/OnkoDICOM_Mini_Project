@@ -116,6 +116,10 @@ class PlotWidget(QWidget):
 
         path = self.paths[value-1]
 
+        msg = QMessageBox()
+        msg.setWindowTitle("Error")
+        msg.setText("Unable to open this dcm file")
+
         try:
             logger.info("Attempting to graph/open file (%s)", path)
             data_source = pydicom.dcmread(path)
@@ -146,14 +150,17 @@ class PlotWidget(QWidget):
                 logger.info("successfully force opened graph/file (%s)", path)
                 return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
             else:
+                msg.exec()
                 logger.info("Unable to open graph/file (%s)")
 
         except AttributeError as err:
             logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
             response = self.err_msg('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)]))
             if response == 'F':
+                msg.exec()
                 logger.info("Unable to open graph/file")
             else:
+                msg.exec()
                 logger.info("Unable to open graph/file")
 
         except NotImplementedError as err:
@@ -175,14 +182,18 @@ class PlotWidget(QWidget):
                                     new=0, autoraise=True)
                     logger.info("Unable to open graph/file, open pydicom document")
                 else:
+                    msg.exec()
                     logger.info("Unable to open graph/file")
+            msg.exec()
 
         except Exception as err:
             logger.error("(%s): Error:(%s)", path, err)
             response = self.err_msg('Error', 'Error: ' + ''.join([str(err)]))
             if response == 'F':
+                msg.exec()
                 logger.info("Unable to open graph/file")
             else:
+                msg.exec()
                 logger.info("Unable to open graph/file")
 
     def force_plot_dcm(self, path):
