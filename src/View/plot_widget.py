@@ -16,7 +16,9 @@ from PySide6.QtWidgets import (
     QSlider
 )
 
-LOG_FILES_DIR = 'logs'
+from src.Model.paths_model import PathsModel
+
+LOG_FILES_DIR = '../../logs'
 if not os.path.isdir(LOG_FILES_DIR):
     os.makedirs(LOG_FILES_DIR)
 
@@ -24,7 +26,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
-file_handler = logging.FileHandler('logs/plot_widget.log', mode='w')
+file_handler = logging.FileHandler('../../logs/plot_widget.log', mode='w')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
@@ -59,8 +61,8 @@ class PlotWidget(QWidget):
         # Connect slider
         self.slider.valueChanged.connect(self.update_plot)
 
-        # Paths var
-        self.paths = None
+        # Paths model
+        self.paths_model = PathsModel()
 
         logger.info("Initialising PlotWidget complete")
 
@@ -75,18 +77,18 @@ class PlotWidget(QWidget):
         Set the paths of the dcm files in the parsed dir
         """
         logger.info("set_paths started within PlotWidget")
-        self.paths = paths
+        self.paths_model.paths.extend(paths)
 
         # Parse 1 to plot the first dcm file
         self.plot_dcm(1)
 
         # Update slider
         self.slider.setEnabled(True)
-        self.slider.setMaximum(len(self.paths))
+        self.slider.setMaximum(self.paths_model.path_count())
 
         logger.info("set_paths completed within PlotWidget")
 
-        return bool(self.paths)
+        return bool(self.paths_model)
 
     def plot_dcm(self, value):
         """
@@ -94,7 +96,7 @@ class PlotWidget(QWidget):
         """
         logger.info("plot_dcm started within PlotWidget")
 
-        path = self.paths[value-1]
+        path = self.paths_model.paths[value-1]
 
         data_source = pydicom.dcmread(path)
         self.axes.clear()
