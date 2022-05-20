@@ -27,8 +27,8 @@ def load_settings(user_id):
         db_result = database.get_setting(user_id)
         if db_result is False:
             raise AttributeError("Could not return settings, setting default")
-        return Settings(db_result)
-    except AttributeError as err:
+        return Settings(*db_result)
+    except (AttributeError, TypeError) as err:
         logging.warning(err)
         return Settings()
 
@@ -36,12 +36,12 @@ def load_settings(user_id):
 class Settings:
     """Stores settings used throughout the program"""
 
-    def __init__(self, user_id=1, window_x=400, window_y=500, force_open=False, dicom_path=''):
-        self.user_id = user_id if user_id is not None else 1
-        self.window_x = window_x if window_x is not None else 400
-        self.window_y = window_y if window_y is not None else 400
-        self.force_open = force_open if force_open is not None else False
-        self.dicom_path = dicom_path if dicom_path is not None else ''
+    def __init__(self, user_id=1, window_x=500, window_y=500, force_open=False, dicom_path=''):
+        self.user_id = user_id
+        self.window_x = window_x
+        self.window_y = window_y
+        self.force_open = force_open
+        self.dicom_path = dicom_path
 
         self.log_settings()
 

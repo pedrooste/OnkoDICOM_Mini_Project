@@ -3,7 +3,7 @@ Tests for plot_widget.py
 """
 import glob
 import pytest
-from plot_widget import PlotWidget
+from src.View.plot_widget import PlotWidget
 
 
 @pytest.fixture
