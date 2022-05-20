@@ -33,11 +33,6 @@ logging.getLogger().addHandler(sql_handler)
 
 log_info = getLogLevel()
 
-# formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
-# file_handler = logging.FileHandler('logs/onko_dicom.log', mode='w')
-# file_handler.setFormatter(formatter)
-# logger.addHandler(file_handler)
-
 
 class OnkoDicom(QMainWindow):
     """
