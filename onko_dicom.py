@@ -5,7 +5,6 @@ This file starts up the QMainWindow with a custom QtWidget, plot_widget
 import logging
 import os
 import sys
-import pydicom
 import glob
 from PySide6 import QtWidgets
 from PySide6.QtGui import QAction
