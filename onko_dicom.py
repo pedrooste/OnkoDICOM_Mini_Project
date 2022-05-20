@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 )
 import plot_widget
 from resources.settings import load_settings
+from configuration import setup_configuration
 
 
 LOG_FILES_DIR = 'logs'
@@ -96,8 +97,8 @@ class OnkoDicom(QMainWindow):
 
         logger.info("close_file completed within OnkoDicom")
 
-
 if __name__ == "__main__":
+    setup_configuration()
     settings = load_settings(1)
 
     app = QtWidgets.QApplication([])
