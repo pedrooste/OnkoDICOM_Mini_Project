@@ -42,7 +42,7 @@ jobs:
         sleep 3
         herbstluftwm &
         sleep 1
-        python -m pytest test
+        python -m pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
 
 #    - name: Test with pytest
 #      run: |
