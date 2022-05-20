@@ -1,12 +1,9 @@
 name: Python CI with pytest and pylint
 
-on:
-  push:
-  pull_request:
+on: ["push", "pull_request"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     env:
       DISPLAY: ':99.0'
@@ -45,15 +42,3 @@ jobs:
         python -m pytest "tests/" -v --cache-clear --cov=. > pytest-coverage.txt
     - name: Comment coverage
       uses: coroo/pytest-coverage-commentator@v1.0.2
-
-#    - name: Test with pytest
-#      run: |
-#        pip install pytest pytest-cov pytest-html
-#        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
-#        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --html=pytest_report.html --self-contained-html --cov-fail-under=80
-#        pytest "src/test_sqlite.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
-#        pytest "tests/test_plot_widget.py" --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html --cov-fail-under=80
-#    - name: Linting with pylint
-#      run: |
-#        pip install pylint
-#        pylint --rcfile=.pylintrc $(git ls-files '*.py')
