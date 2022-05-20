@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
 import plot_widget
 from resources.settings import load_settings
 
+
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
     os.makedirs(LOG_FILES_DIR)
