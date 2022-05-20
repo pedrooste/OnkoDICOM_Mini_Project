@@ -18,6 +18,7 @@ from resources.sqlite_logger import SQLiteHandler
 from resources.sqlite_logger import getLogLevel
 
 
+
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
     os.makedirs(LOG_FILES_DIR)
