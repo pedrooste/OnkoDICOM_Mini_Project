@@ -31,13 +31,6 @@ logging.getLogger().addHandler(sql_handler)
 
 log_info = getLogLevel()
 
-
-# formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
-# file_handler = logging.FileHandler('logs/plot_widget.log', mode='w')
-# file_handler.setFormatter(formatter)
-# logger.addHandler(file_handler)
-
-
 class PlotWidget(QWidget):
     """
     Creates a custom QWidget, used for displaying a dcm file in other QtWidgets

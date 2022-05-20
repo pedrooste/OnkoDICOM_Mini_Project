@@ -57,9 +57,8 @@ def getLogLevel():
             f = open("log-level.txt", "r")
             firstline = f.readline().rstrip()
             if firstline == "INFO = False":
-                #print("False")
                 return False
-            #print("True")
+
             return True
 
 class SQLiteHandler(logging.Handler):
@@ -94,16 +93,3 @@ class SQLiteHandler(logging.Handler):
         conn = sqlite3.connect(self.database)
         conn.execute(sql)
         conn.commit()  # not efficient, but hopefully thread-safe
-        
-def main():
-    """ Main Method """
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
-    # sqlite handler
-    
-
-    # test
-    logging.info('Start')
-    logging.info('End')
-    logging.error("Application error")
