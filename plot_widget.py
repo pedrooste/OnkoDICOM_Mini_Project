@@ -142,15 +142,18 @@ class PlotWidget(QWidget):
                 self.axes.set_title(path.rsplit('/', 1)[1])
                 self.view.draw()
 
-                logger.info("plot_dcm completed within PlotWidget")
-                return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
                 logger.info("successfully force opened graph/file (%s)", path)
+                return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
             else:
-                pass
+                logger.info("Unable to open graph/file (%s)")
 
         except AttributeError as err:
             logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
-            self.err_msg('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)]))
+            response = self.err_msg('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)]))
+            if response == 'F':
+                logger.info("Unable to open graph/file")
+            else:
+                logger.info("Unable to open graph/file")
 
         except NotImplementedError as err:
             try:
@@ -169,11 +172,17 @@ class PlotWidget(QWidget):
                 if response == 'F':
                     webbrowser.open('https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html',
                                     new=0, autoraise=True)
-                    logger.info("Open pydicom document")
+                    logger.info("Unable to open graph/file, open pydicom document")
+                else:
+                    logger.info("Unable to open graph/file")
 
         except Exception as err:
             logger.error("(%s): Error:(%s)", path, err)
-            self.err_msg('Error', 'Error: ' + ''.join([str(err)]))
+            response = self.err_msg('Error', 'Error: ' + ''.join([str(err)]))
+            if response == 'F':
+                logger.info("Unable to open graph/file")
+            else:
+                logger.info("Unable to open graph/file")
 
     def clear_view(self):
         """
