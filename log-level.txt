@@ -1,0 +1,2 @@
+INFO = True
+# set above line to False for no info logging
