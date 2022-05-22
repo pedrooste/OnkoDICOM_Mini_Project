@@ -41,7 +41,7 @@ jobs:
         sleep 3
         herbstluftwm &
         sleep 1
-        coverage run -m pytest "tests/" -v --source=.
+        coverage run -m pytest "tests/" -v
         coverage report -m
 #        python -m pytest "tests/" -v
 #    - name: Comment coverage
