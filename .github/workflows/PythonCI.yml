@@ -41,4 +41,4 @@ jobs:
         sleep 3
         herbstluftwm &
         sleep 1
-        python -m pytest "tests/" -v --cov-report term --cov=.
+        python -m pytest "tests/" -v --cov-report term --cov=. --cov-fail-under=80
