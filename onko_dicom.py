@@ -5,7 +5,6 @@ This file starts up the QMainWindow with a custom QtWidget, plot_widget
 import logging
 import os
 import sys
-import glob
 from PySide6 import QtWidgets
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
@@ -13,8 +12,6 @@ from PySide6.QtWidgets import (
     QFileDialog
 )
 import plot_widget
-from resources.settings import load_settings
-
 
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -39,7 +36,7 @@ class OnkoDicom(QMainWindow):
 
         self.close_action = None
         self.open_action = None
-        self.resize(settings.window_x, settings.window_y)
+        self.resize(500, 500)
         self.show()
 
         self.setWindowTitle("OnkoDICOM 2022 Mini Project")
@@ -57,10 +54,10 @@ class OnkoDicom(QMainWindow):
         main_menu = self.menuBar()
         file_menu = main_menu.addMenu("File")
 
-        self.open_action = QAction("Open Directory", self)
-        self.open_action.triggered.connect(lambda: self.open_dir())
+        self.open_action = QAction("Open DICOM File", self)
+        self.open_action.triggered.connect(lambda: self.open_file())
 
-        self.close_action = QAction("Close", self)
+        self.close_action = QAction("Close File", self)
         self.close_action.triggered.connect(lambda: self.close_file())
         self.close_action.setEnabled(False)
 
@@ -69,23 +66,28 @@ class OnkoDicom(QMainWindow):
 
         logger.info("Initialised Menu within OnkoDicom")
 
-    def open_dir(self):
+    def open_file(self):
         """Opens a file import window"""
-        logger.info("open_dir started within OnkoDicom")
+        logger.info("open_file started within OnkoDicom")
 
-        directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        files = os.path.join(directory, "*.dcm").replace("\\", "/")
-        paths = sorted(glob.glob(files))
+        file_filter = 'Dicom File (*.dcm)'
+        full_path = QFileDialog.getOpenFileName(
+            parent=self,
+            caption='Select a File',
+            dir=os.getcwd(),
+            filter=file_filter,
+            selectedFilter='Dicom File (*.dcm)'
+        )
 
         # If user cancels open, path is empty
-        if not paths:
-            logger.info("open_dir user canceled open operation")
+        if not full_path[0]:
+            logger.info("open_file user canceled open operation")
             return
 
-        self.plot_w.set_paths(paths)
+        self.plot_w.plot_dcm(full_path[0])
         self.close_action.setEnabled(True)
 
-        logger.info("open_dir completed within OnkoDicom")
+        logger.info("open_file completed within OnkoDicom")
 
     def close_file(self):
         """Clears the file from the view"""
@@ -98,8 +100,6 @@ class OnkoDicom(QMainWindow):
 
 
 if __name__ == "__main__":
-    settings = load_settings(1)
-
     app = QtWidgets.QApplication([])
     OnkoDicom()
     sys.exit(app.exec())
