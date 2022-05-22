@@ -1,4 +1,4 @@
 [run]
-omit = tests/*
+omit = test/*
 [report]
-omit = tests/*
+omit = test/*

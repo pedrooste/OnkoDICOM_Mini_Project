@@ -51,5 +51,5 @@ jobs:
 
     - name: Testing and Coverage with pytest
       run: |
-        python -m pytest "tests/" -v --cov-config=.coveragerc --cov-report term --cov=.
+        python -m pytest "test/" -v --cov-config=.coveragerc --cov-report term --cov=.
 #        --cov-fail-under=80
