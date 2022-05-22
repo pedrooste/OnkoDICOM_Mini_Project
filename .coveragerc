@@ -1,4 +1,4 @@
 [run]
-omit = "tests/*.py"
+omit = "tests/test*.py"
 [report]
-omit = "tests/*.py"
+omit = "tests/test*.py"
