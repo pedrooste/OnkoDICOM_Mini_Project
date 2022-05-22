@@ -33,7 +33,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pip install pytest pytest-cov pytest-github-actions-annotate-failures
+        pip install pytest pytest-cov
         sudo apt-get update
         sudo apt-get install -qq xvfb libxkbcommon-x11-0 herbstluftwm libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0 libopengl0 freeglut3 freeglut3-dev
         # sudo Xvfb :1 -screen 0 1024x768x24 </dev/null &
@@ -41,4 +41,4 @@ jobs:
         sleep 3
         herbstluftwm &
         sleep 1
-        python -m pytest "tests/" -v --exitfirst --verbose --failed-first --cov=. --cov-report html
+        python -m pytest "tests/" -v --cov-report term --cov=.
