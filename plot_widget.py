@@ -15,6 +15,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QSlider
 )
+from resources.sqlite_logger import SQLiteHandler
+from resources.sqlite_logger import getLogLevel
 
 LOG_FILES_DIR = 'logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -23,11 +25,11 @@ if not os.path.isdir(LOG_FILES_DIR):
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)s:%(name)s:%(message)s')
-file_handler = logging.FileHandler('logs/plot_widget.log', mode='w')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
+sql_handler = SQLiteHandler(database="logs.db")
+sql_handler.setLevel(logging.INFO)
+logging.getLogger().addHandler(sql_handler)
 
+log_info = getLogLevel()
 
 class PlotWidget(QWidget):
     """
@@ -35,7 +37,8 @@ class PlotWidget(QWidget):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-        logger.info("Initialising PlotWidget")
+        if log_info:
+            logger.info("Initialising PlotWidget")
 
         #  Create widgets
         self.view = FigureCanvasQTAgg(Figure(figsize=(5, 5)))
@@ -62,7 +65,8 @@ class PlotWidget(QWidget):
         # Paths var
         self.paths = None
 
-        logger.info("Initialising PlotWidget complete")
+        if log_info:
+            logger.info("Initialising PlotWidget complete")
 
     def update_plot(self, value):
         """
@@ -74,7 +78,8 @@ class PlotWidget(QWidget):
         """
         Set the paths of the dcm files in the parsed dir
         """
-        logger.info("set_paths started within PlotWidget")
+        if log_info:
+            logger.info("set_paths started within PlotWidget")
         self.paths = paths
 
         # Parse 1 to plot the first dcm file
@@ -84,7 +89,8 @@ class PlotWidget(QWidget):
         self.slider.setEnabled(True)
         self.slider.setMaximum(len(self.paths))
 
-        logger.info("set_paths completed within PlotWidget")
+        if log_info:
+            logger.info("set_paths completed within PlotWidget")
 
         return bool(self.paths)
 
@@ -92,21 +98,25 @@ class PlotWidget(QWidget):
         """
         Plots the dcm file in the axes and view
         """
-        logger.info("plot_dcm started within PlotWidget")
+        if log_info:
+            logger.info("plot_dcm started within PlotWidget")
 
         path = self.paths[value-1]
 
         try:
-            logger.info("Attempting to graph/open file (%s)", path)
+            if log_info:
+              logger.info("Attempting to graph/open file (%s)", path)
             data_source = pydicom.dcmread(path)
             self.axes.clear()
             self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
             self.axes.set_title(path.rsplit('/', 1)[1])
             self.view.draw()
 
-            logger.info("plot_dcm completed within PlotWidget")
+            if log_info:
+              logger.info("plot_dcm completed within PlotWidget")
             return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
-            logger.info("successfully opened graph/file (%s)", path)
+            if log_info:
+              logger.info("successfully opened graph/file (%s)", path)
 
         except pydicom.errors.InvalidDicomError as err:
             logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", path, err)
@@ -115,11 +125,13 @@ class PlotWidget(QWidget):
         except Exception as err:
             logger.error("(%s): Error:(%s)", path, err)
 
+
     def clear_view(self):
         """
         Clears the axes and view
         """
-        logger.info("clear_view started within PlotWidget")
+        if log_info:
+            logger.info("clear_view started within PlotWidget")
 
         self.slider.setEnabled(False)
         self.slider.setValue(1)
@@ -127,5 +139,6 @@ class PlotWidget(QWidget):
         self.axes.axis('off')
         self.view.draw()
 
-        logger.info("clear_view completed within PlotWidget")
+        if log_info:
+            logger.info("clear_view completed within PlotWidget")
         return self.axes.axis() == (0.0, 1.0, 0.0, 1.0)
