@@ -196,24 +196,6 @@ class PlotWidget(QWidget):
                 msg.exec()
                 logger.info("Unable to open graph/file")
 
-    def force_plot_dcm(self, path):
-        """
-        Force plots the dcm file in the axes and view
-        """
-        logger.info("force_plot_dcm started within PlotWidget")
-
-        data_source = pydicom.dcmread(path, force=True)
-        if "TransferSyntaxUID" not in data_source.file_meta:
-            data_source.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-            # pydicom.write_file(path, data_source)
-        self.axes.clear()
-        self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
-        self.axes.set_title(path.rsplit('/', 1)[1])
-        self.view.draw()
-
-        logger.info("force_plot_dcm completed within PlotWidget")
-        return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
-
     def clear_view(self):
         """
         Clears the axes and view
