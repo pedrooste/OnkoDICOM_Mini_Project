@@ -106,58 +106,10 @@ class OnkoDicom(QMainWindow):
             logger.info("open_dir user canceled open operation")
             return
 
-        """Error handling"""
         self.plot_w.set_paths(paths)
         self.close_action.setEnabled(True)
-        try:
-            logger.info("Attempting to graph/open file (%s)", full_path[0])
-            self.plot_w.plot_dcm(full_path[0])
-            self.close_action.setEnabled(True)
-            logger.info("successfully opened graph/file (%s)", full_path[0])
 
-        except pydicom.errors.InvalidDicomError as err:
-            logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", full_path[0], err)
-            response = self.err_msg('Error', 'InvalidDicomError, Missing Dicom Header. \n\nError: '
-                                    + '<br>'.join([str(err)]))
-            if response == 'F':
-                self.plot_w.force_plot_dcm(full_path[0])
-                self.close_action.setEnabled(True)
-                logger.info("successfully force opened graph/file (%s)", full_path[0])
-            else:
-                pass
-
-        except AttributeError as err:
-            logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", full_path[0], err)
-            response = self.err_msg('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)]))
-            if response == 'F':
-                self.plot_w.force_plot_dcm(full_path[0])
-                self.close_action.setEnabled(True)
-                logger.info("successfully force opened graph/file (%s)", full_path[0])
-            else:
-                pass
-
-        except NotImplementedError as err:
-            try:
-                logger.error("(%s): NotImplementedError. Error:(%s)", full_path[0], err)
-                self.err_msg('Error', 'NotImplementedError. \n\nError: ' + ''.join([str(err)]))
-
-            except ValueError as err:
-                logger.error("(%s): ValueError. Error:(%s)", full_path[0], err)
-                response = self.err_msg('Error', 'NotImplementedError and ValueError. \n\nError: ' +
-                                        "Unable to decode pixel data  with a transfer syntax UID"
-                                        "as there are no pixel data handlers "
-                                        "available that support it. Please see the pydicom "
-                                        "documentation for information on supported transfer syntaxes\n\n"
-                                        + 'Error: ' + ''.join([str(err)])
-                                        )
-                if response == 'F':
-                    webbrowser.open('https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html',
-                                    new=0, autoraise=True)
-                    logger.info("Open pydicom document")
-
-        except Exception as err:
-            logger.error("(%s): Error:(%s)", full_path[0], err)
-            self.err_msg('Error', 'Error: ' + ''.join([str(err)]))
+        logger.info("open_dir completed within OnkoDicom")
 
     def close_file(self):
         """Clears the file from the view"""

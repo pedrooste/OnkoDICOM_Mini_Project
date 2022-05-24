@@ -35,6 +35,7 @@ class PlotWidget(QWidget):
     """
     Creates a custom QWidget, used for displaying a dcm file in other QtWidgets
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
         logger.info("Initialising PlotWidget")
@@ -114,7 +115,7 @@ class PlotWidget(QWidget):
         """
         logger.info("plot_dcm started within PlotWidget")
 
-        path = self.paths[value-1]
+        path = self.paths[value - 1]
 
         msg = QMessageBox()
         msg.setWindowTitle("Error")
@@ -130,7 +131,6 @@ class PlotWidget(QWidget):
 
             logger.info("plot_dcm completed within PlotWidget")
             return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
-            logger.info("successfully opened graph/file (%s)", path)
 
         except pydicom.errors.InvalidDicomError as err:
             logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", path, err)
@@ -141,7 +141,6 @@ class PlotWidget(QWidget):
                 data_source = pydicom.dcmread(path, force=True)
                 if "TransferSyntaxUID" not in data_source.file_meta:
                     data_source.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-                    # pydicom.write_file(path, data_source)
                 self.axes.clear()
                 self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
                 self.axes.set_title(path.rsplit('/', 1)[1])
