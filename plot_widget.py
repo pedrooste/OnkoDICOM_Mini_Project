@@ -6,6 +6,7 @@ import logging
 import os
 import pydicom
 import pydicom.data
+import webbrowser
 from PySide6.QtCore import Qt
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
@@ -13,7 +14,8 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
-    QSlider
+    QSlider,
+    QMessageBox
 )
 
 LOG_FILES_DIR = 'logs'
@@ -64,6 +66,24 @@ class PlotWidget(QWidget):
 
         logger.info("Initialising PlotWidget complete")
 
+    def err_msg(self, title, msg):
+        """Error handling messagebox"""
+        msg_box = QMessageBox(self, title, msg)
+        msg_box.setIcon(QMessageBox.Critical)
+        msg_box.setWindowTitle(title)
+        msg_box.setText(msg)
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        button_y = msg_box.button(QMessageBox.Yes)
+        button_y.setText('Force Open')
+        button_n = msg_box.button(QMessageBox.No)
+        button_n.setText('Abort')
+        msg_box.exec()
+
+        if msg_box.clickedButton() == button_y:
+            return 'F'
+        elif msg_box.clickedButton() == button_n:
+            return 'A'
+
     def update_plot(self, value):
         """
         Updates the plot whenever the slider's value is changed
@@ -96,6 +116,10 @@ class PlotWidget(QWidget):
 
         path = self.paths[value-1]
 
+        msg = QMessageBox()
+        msg.setWindowTitle("Error")
+        msg.setText("Unable to open this dcm file")
+
         try:
             logger.info("Attempting to graph/open file (%s)", path)
             data_source = pydicom.dcmread(path)
@@ -106,14 +130,70 @@ class PlotWidget(QWidget):
 
             logger.info("plot_dcm completed within PlotWidget")
             return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
-            logger.info("successfully opened graph/file (%s)", path)
 
         except pydicom.errors.InvalidDicomError as err:
             logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", path, err)
+            response = self.err_msg('Error', 'InvalidDicomError, Missing Dicom Header. \n\nError: '
+                                    + '<br>'.join([str(err)]))
+            if response == 'F':
+                logger.info("force_plot_dcm started within PlotWidget")
+                data_source = pydicom.dcmread(path, force=True)
+                if "TransferSyntaxUID" not in data_source.file_meta:
+                    data_source.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+                    # pydicom.write_file(path, data_source)
+                self.axes.clear()
+                self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
+                self.axes.set_title(path.rsplit('/', 1)[1])
+                self.view.draw()
+
+                logger.info("successfully force opened graph/file (%s)", path)
+                return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
+            else:
+                msg.exec()
+                logger.info("Unable to open graph/file (%s)")
+
         except AttributeError as err:
             logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
+            response = self.err_msg('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)]))
+            if response == 'F':
+                msg.exec()
+                logger.info("Unable to open graph/file")
+            else:
+                msg.exec()
+                logger.info("Unable to open graph/file")
+
+        except NotImplementedError as err:
+            try:
+                logger.error("(%s): NotImplementedError. Error:(%s)", path, err)
+                self.err_msg('Error', 'NotImplementedError. \n\nError: ' + ''.join([str(err)]))
+
+            except ValueError as err:
+                logger.error("(%s): ValueError. Error:(%s)", path, err)
+                response = self.err_msg('Error', 'NotImplementedError and ValueError. \n\nError: ' +
+                                        "Unable to decode pixel data  with a transfer syntax UID"
+                                        "as there are no pixel data handlers "
+                                        "available that support it. Please see the pydicom "
+                                        "documentation for information on supported transfer syntaxes\n\n"
+                                        + 'Error: ' + ''.join([str(err)])
+                                        )
+                if response == 'F':
+                    webbrowser.open('https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html',
+                                    new=0, autoraise=True)
+                    logger.info("Unable to open graph/file, open pydicom document")
+                else:
+                    msg.exec()
+                    logger.info("Unable to open graph/file")
+            msg.exec()
+
         except Exception as err:
             logger.error("(%s): Error:(%s)", path, err)
+            response = self.err_msg('Error', 'Error: ' + ''.join([str(err)]))
+            if response == 'F':
+                msg.exec()
+                logger.info("Unable to open graph/file")
+            else:
+                msg.exec()
+                logger.info("Unable to open graph/file")
 
     def clear_view(self):
         """
