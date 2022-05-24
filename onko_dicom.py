@@ -6,19 +6,17 @@ import logging
 import os
 import sys
 import glob
-import pydicom
-import webbrowser
 
 from PySide6 import QtWidgets
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QMainWindow,
     QFileDialog,
-    QMessageBox
 )
 import plot_widget
 from resources.settings import load_settings
-import pydicom
+
+from configuration import setup_configuration
 
 
 LOG_FILES_DIR = 'logs'
@@ -75,24 +73,6 @@ class OnkoDicom(QMainWindow):
 
         logger.info("Initialised Menu within OnkoDicom")
 
-    def err_msg(self, title, msg):
-        """Error handling messagebox"""
-        msg_box = QMessageBox(self, title, msg)
-        msg_box.setIcon(QMessageBox.Critical)
-        msg_box.setWindowTitle(title)
-        msg_box.setText(msg)
-        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        button_y = msg_box.button(QMessageBox.Yes)
-        button_y.setText('Force Open')
-        button_n = msg_box.button(QMessageBox.No)
-        button_n.setText('Abort')
-        msg_box.exec()
-
-        if msg_box.clickedButton() == button_y:
-            return 'F'
-        elif msg_box.clickedButton() == button_n:
-            return 'A'
-
     def open_dir(self):
         """Opens a file import window"""
         logger.info("open_dir started within OnkoDicom")
@@ -120,8 +100,8 @@ class OnkoDicom(QMainWindow):
 
         logger.info("close_file completed within OnkoDicom")
 
-
 if __name__ == "__main__":
+    setup_configuration()
     settings = load_settings(1)
 
     app = QtWidgets.QApplication([])
