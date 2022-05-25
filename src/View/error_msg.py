@@ -2,9 +2,6 @@
 from PySide6.QtWidgets import QMessageBox, QWidget
 
 
-
-
-
 class ErrorMessage(QWidget):
     """Generic Err message class"""
 
@@ -21,9 +18,20 @@ class ErrorMessage(QWidget):
         self.close_button = self.msg_box.button(QMessageBox.No)
         self.close_button.setText('Abort')
 
-        self.response = self.msg_box.exec()
+        # # Moved the below to it's own function
+        # self.response = self.msg_box.exec()
+        #
+        # # Is broken to fix
+        # if self.response == self.force_button:
+        #     self.force_open()
+        # else:
+        #     self.close_msg()
 
-        if self.response == self.force_button:
+    def get_response(self):
+        response = self.msg_box.exec()
+
+        # TODO: Is broken to fix
+        if response == self.force_button:
             self.force_open()
         else:
             self.close_msg()

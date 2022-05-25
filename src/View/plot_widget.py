@@ -120,7 +120,7 @@ class PlotWidget(QWidget):
         except pydicom.errors.InvalidDicomError as err:
             logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", path, err)
             response = ErrorMessage('Error', 'InvalidDicomError, Missing Dicom Header. \n\nError: '
-                                    + '<br>'.join([str(err)]))
+                                    + '<br>'.join([str(err)])).get_response()
             if response:
                 logger.info("force_plot_dcm started within PlotWidget")
                 data_source = pydicom.dcmread(path, force=True)
@@ -140,7 +140,7 @@ class PlotWidget(QWidget):
 
         except AttributeError as err:
             logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
-            response = ErrorMessage('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)]))
+            response = ErrorMessage('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)])).get_response()
             if response:
                 msg.exec()
                 logger.info("Unable to open graph/file")
@@ -151,7 +151,7 @@ class PlotWidget(QWidget):
         except NotImplementedError as err:
             try:
                 logger.error("(%s): NotImplementedError. Error:(%s)", path, err)
-                ErrorMessage('Error', 'NotImplementedError. \n\nError: ' + ''.join([str(err)]))
+                ErrorMessage('Error', 'NotImplementedError. \n\nError: ' + ''.join([str(err)])).get_response()
 
             except ValueError as err:
                 logger.error("(%s): ValueError. Error:(%s)", path, err)
@@ -161,7 +161,7 @@ class PlotWidget(QWidget):
                                         "available that support it. Please see the pydicom "
                                         "documentation for information on supported transfer syntaxes\n\n"
                                         + 'Error: ' + ''.join([str(err)])
-                                        )
+                                        ).get_response()
                 if response:
                     webbrowser.open('https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html',
                                     new=0, autoraise=True)
@@ -173,7 +173,7 @@ class PlotWidget(QWidget):
 
         except Exception as err:
             logger.error("(%s): Error:(%s)", path, err)
-            response = ErrorMessage('Error', 'Error: ' + ''.join([str(err)]))
+            response = ErrorMessage('Error', 'Error: ' + ''.join([str(err)])).get_response()
             if response:
                 msg.exec()
                 logger.info("Unable to open graph/file")
