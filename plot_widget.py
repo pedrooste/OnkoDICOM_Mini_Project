@@ -31,6 +31,7 @@ logging.getLogger().addHandler(sql_handler)
 
 log_info = getLogLevel()
 
+
 class PlotWidget(QWidget):
     """
     Creates a custom QWidget, used for displaying a dcm file in other QtWidgets

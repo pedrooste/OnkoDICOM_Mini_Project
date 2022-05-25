@@ -32,6 +32,7 @@ logging.getLogger().addHandler(sql_handler)
 log_info = getLogLevel()
 
 
+
 class OnkoDicom(QMainWindow):
     """
     Encapsulates and sets main window
