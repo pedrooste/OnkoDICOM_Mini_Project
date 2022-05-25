@@ -21,8 +21,7 @@ class ErrorMessage(QWidget):
         # # Moved the below to it's own function
         # self.response = self.msg_box.exec()
         #
-        # # Is broken to fix
-        # if self.response == self.force_button:
+        # if self.response == QMessageBox.Yes:
         #     self.force_open()
         # else:
         #     self.close_msg()
@@ -30,8 +29,7 @@ class ErrorMessage(QWidget):
     def get_response(self):
         response = self.msg_box.exec()
 
-        # TODO: Is broken to fix
-        if response == self.force_button:
+        if response == QMessageBox.Yes:
             self.force_open()
         else:
             self.close_msg()
