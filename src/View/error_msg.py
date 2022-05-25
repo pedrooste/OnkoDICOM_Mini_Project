@@ -18,26 +18,12 @@ class ErrorMessage(QWidget):
         self.close_button = self.msg_box.button(QMessageBox.No)
         self.close_button.setText('Abort')
 
-        # # Moved the below to it's own function
-        # self.response = self.msg_box.exec()
-        #
-        # if self.response == QMessageBox.Yes:
-        #     self.force_open()
-        # else:
-        #     self.close_msg()
-
     def get_response(self):
+        """Checks err msg button that the user has clicked"""
         response = self.msg_box.exec()
 
         if response == QMessageBox.Yes:
-            self.force_open()
+            return True
         else:
-            self.close_msg()
+            return False
 
-    def force_open(self):
-        """Returns true to force open"""
-        return True
-
-    def close_msg(self):
-        """Returns false to close err msg"""
-        return False
