@@ -26,4 +26,3 @@ class ErrorMessage(QWidget):
             return True
         else:
             return False
-

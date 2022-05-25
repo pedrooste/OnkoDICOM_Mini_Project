@@ -140,7 +140,8 @@ class PlotWidget(QWidget):
 
         except AttributeError as err:
             logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
-            response = ErrorMessage('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)])).get_response()
+            response = ErrorMessage('Error', 'AttributeError, Missing Attribute. \n\nError: '
+                                    + '<br>'.join([str(err)])).get_response()
             if response:
                 msg.exec()
                 logger.info("Unable to open graph/file")
