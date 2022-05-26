@@ -1,12 +1,10 @@
 """
 Integrates pydicom, matplotlib and PySide6 together
 """
-
 import logging
 import os
 import pydicom
 import pydicom.data
-import webbrowser
 from PySide6.QtCore import Qt
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
@@ -81,6 +79,7 @@ class PlotWidget(QWidget):
         Set the paths of the dcm files in the parsed dir
         """
         logger.info("set_paths started within PlotWidget")
+        self.paths_model.paths.clear()
         self.paths_model.paths.extend(paths)
 
         # Parse 1 to plot the first dcm file
@@ -102,85 +101,50 @@ class PlotWidget(QWidget):
 
         path = self.paths_model.paths[value - 1]
 
-        msg = QMessageBox()
-        msg.setWindowTitle("Error")
-        msg.setText("Unable to open this dcm file")
-
         try:
             logger.info("Attempting to graph/open file (%s)", path)
-            data_source = pydicom.dcmread(path)
-            self.axes.clear()
-            self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
-            self.axes.set_title(path.rsplit('/', 1)[1])
-            self.view.draw()
-
-            logger.info("plot_dcm completed within PlotWidget")
-            return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
+            return self.open_dicom_file(path, False)
 
         except pydicom.errors.InvalidDicomError as err:
-            logger.error("(%s): InvalidDicomError, Missing Dicom Header. Error:(%s)", path, err)
-            response = ErrorMessage('Error', 'InvalidDicomError, Missing Dicom Header. \n\nError: '
-                                    + '<br>'.join([str(err)])).get_response()
+            response = self.display_err_msg("Error", 'InvalidDicomError, Missing Dicom Header. \n\nError: '
+                                            + '<br>'.join([str(err)]))
             if response:
                 logger.info("force_plot_dcm started within PlotWidget")
-                data_source = pydicom.dcmread(path, force=True)
-                if "TransferSyntaxUID" not in data_source.file_meta:
-                    data_source.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-                    # pydicom.write_file(path, data_source)
-                self.axes.clear()
-                self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
-                self.axes.set_title(path.rsplit('/', 1)[1])
-                self.view.draw()
+            self.open_dicom_file(path, True)
 
-                logger.info("successfully force opened graph/file (%s)", path)
-                return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
-
-            msg.exec()
-            logger.info("Unable to open graph/file (%s)")
-
-        except AttributeError as err:
-            logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
-            response = ErrorMessage('Error', 'AttributeError, Missing Attribute. \n\nError: '
-                                    + '<br>'.join([str(err)])).get_response()
-            if response:
-                msg.exec()
-                logger.info("Unable to open graph/file")
-            else:
-                msg.exec()
-                logger.info("Unable to open graph/file")
+            self.display_dialog()
 
         except NotImplementedError as err:
-            try:
-                logger.error("(%s): NotImplementedError. Error:(%s)", path, err)
-                ErrorMessage('Error', 'NotImplementedError. \n\nError: ' + ''.join([str(err)])).get_response()
+            logger.info(
+                "Error, see related information https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html")
 
-            except ValueError as err:
-                logger.error("(%s): ValueError. Error:(%s)", path, err)
-                response = ErrorMessage('Error', 'NotImplementedError and ValueError. \n\nError: ' +
-                                        "Unable to decode pixel data  with a transfer syntax UID"
-                                        "as there are no pixel data handlers "
-                                        "available that support it. Please see the pydicom "
-                                        "documentation for information on supported transfer syntaxes\n\n"
-                                        + 'Error: ' + ''.join([str(err)])
-                                        ).get_response()
-                if response:
-                    webbrowser.open('https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html',
-                                    new=0, autoraise=True)
-                    logger.info("Unable to open graph/file, open pydicom document")
-                else:
-                    msg.exec()
-                    logger.info("Unable to open graph/file")
-            msg.exec()
-
-        except Exception as err:
+        except (AttributeError, Exception) as err:
             logger.error("(%s): Error:(%s)", path, err)
-            response = ErrorMessage('Error', 'Error: ' + ''.join([str(err)])).get_response()
-            if response:
-                msg.exec()
-                logger.info("Unable to open graph/file")
-            else:
-                msg.exec()
-                logger.info("Unable to open graph/file")
+            self.display_dialog()
+
+    def display_err_msg(self, title, err):
+        """Renders Error message"""
+        return ErrorMessage(self, title, err).get_response()
+
+    def display_dialog(self, title="Error", msg="Unable to open this dcm file"):
+        """Renders dialog prompt"""
+        msg = QMessageBox(QMessageBox.Icon.Critical, title, msg, parent=self)
+        msg.exec()
+        logger.info("Unable to open graph/file")
+
+    def open_dicom_file(self, path, force):
+        """Opens dicom file"""
+        logger.info("Attempting to graph/open file (%s)", path)
+        data_source = pydicom.dcmread(path, force=force)
+        if "TransferSyntaxUID" not in data_source.file_meta and force:
+            data_source.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
+        self.axes.clear()
+        self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
+        self.axes.set_title(path.rsplit('/', 1)[1])
+        self.view.draw()
+
+        logger.info("plot_dcm completed within PlotWidget")
+        return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
 
     def clear_view(self):
         """
