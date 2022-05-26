@@ -1,3 +1,5 @@
+![PythonCI](https://github.com/pedrooste/OnkoDICOM_Mini_Project/actions/workflows/PythonCI.yml/badge.svg)
+
 # OnkoDICOM_Mini_Project
 OnkoDICOM Introduction to DICOM and PySide6 Project.
 
