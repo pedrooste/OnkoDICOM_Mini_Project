@@ -3,7 +3,8 @@ Tests for plot_widget.py
 """
 import glob
 import pytest
-from plot_widget import PlotWidget
+from PySide6 import QtCore, QtWidgets
+from src.View.plot_widget import PlotWidget
 
 
 @pytest.fixture
@@ -37,6 +38,44 @@ def test_plot_dcm(test_app):
     """
     assert test_app.set_paths(glob.glob(r"test/test files/DICOM-RT-01/*.dcm"))
     assert test_app.plot_dcm(2)
+
+
+def test_display_err_msg(test_app, qtbot):
+    """
+    Tests plot_widget display_err_msg function
+    """
+
+    def test_message_window():
+        """
+        Local function to create a test QMessageBox
+        """
+        errMsg = test_app.findChild(QtWidgets.QMessageBox)
+        assert errMsg is not None
+        cancel = errMsg.buttons()[0]
+        qtbot.mouseClick(cancel, QtCore.Qt.LeftButton, delay=1)
+
+    QtCore.QTimer.singleShot(1, test_message_window)
+
+    assert test_app.display_err_msg("title", "msg")
+
+
+def test_display_dialog(test_app, qtbot):
+    """
+    Tests plot_widget display_dialog function
+    """
+
+    def test_message_window():
+        """
+        Local function to create a test QMessageBox
+        """
+        diaMsg = test_app.findChild(QtWidgets.QMessageBox)
+        assert diaMsg is not None
+        cancel = diaMsg.buttons()[0]
+        qtbot.mouseClick(cancel, QtCore.Qt.LeftButton, delay=1)
+
+    QtCore.QTimer.singleShot(1, test_message_window)
+
+    test_app.display_dialog("title", "msg")
 
 
 def test_clear_view(test_app):

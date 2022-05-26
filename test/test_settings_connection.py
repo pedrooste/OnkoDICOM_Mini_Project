@@ -53,4 +53,3 @@ def test_delete():
 
     assert conn.delete_setting(1)
     assert conn.get_setting(1) is None
-
