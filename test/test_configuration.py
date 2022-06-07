@@ -2,6 +2,6 @@
 from src.configuration import setup_configuration
 
 
-def test_configeration():
-    """Configeration function can run"""
+def test_configuration():
+    """Configuration function can run"""
     setup_configuration()
