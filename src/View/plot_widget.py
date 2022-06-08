@@ -74,6 +74,7 @@ class PlotWidget(QWidget):
         """
         Updates the plot whenever the slider's value is changed
         """
+        logger.info("Plot updated")
         return self.plot_dcm(value)
 
     def set_paths(self, paths):
@@ -107,7 +108,7 @@ class PlotWidget(QWidget):
         msg.setText("Unable to open this dcm file")
 
         try:
-            logger.info("Attempting to graph/open file (%s)", path)
+            logger.warn("Attempting to graph/open file (%s)", path)
             data_source = pydicom.dcmread(path)
             self.axes.clear()
             self.axes.imshow(data_source.pixel_array, cmap=plt.cm.bone)
@@ -136,17 +137,17 @@ class PlotWidget(QWidget):
                 return self.axes.axis() != (0.0, 1.0, 0.0, 1.0)
 
             msg.exec()
-            logger.info("Unable to open graph/file (%s)")
+            logger.error("Unable to open graph/file (%s)")
 
         except AttributeError as err:
             logger.error("(%s): AttributeError, Missing Attribute. Error:(%s)", path, err)
             response = ErrorMessage('Error', 'AttributeError, Missing Attribute. \n\nError: ' + '<br>'.join([str(err)])).get_response()
             if response:
                 msg.exec()
-                logger.info("Unable to open graph/file")
+                logger.error("Unable to open graph/file")
             else:
                 msg.exec()
-                logger.info("Unable to open graph/file")
+                logger.error("Unable to open graph/file")
 
         except NotImplementedError as err:
             try:
@@ -165,10 +166,10 @@ class PlotWidget(QWidget):
                 if response:
                     webbrowser.open('https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html',
                                     new=0, autoraise=True)
-                    logger.info("Unable to open graph/file, open pydicom document")
+                    logger.error("Unable to open graph/file, open pydicom document")
                 else:
                     msg.exec()
-                    logger.info("Unable to open graph/file")
+                    logger.error("Unable to open graph/file")
             msg.exec()
 
         except Exception as err:
@@ -176,10 +177,10 @@ class PlotWidget(QWidget):
             response = ErrorMessage('Error', 'Error: ' + ''.join([str(err)])).get_response()
             if response:
                 msg.exec()
-                logger.info("Unable to open graph/file")
+                logger.error("Unable to open graph/file")
             else:
                 msg.exec()
-                logger.info("Unable to open graph/file")
+                logger.error("Unable to open graph/file")
 
     def clear_view(self):
         """
