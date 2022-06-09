@@ -109,8 +109,7 @@ class PlotWidget(QWidget):
         allDCM.sort(key=lambda ds: float(ds.get_item((0x0020, 0x1041)).value), reverse=True)
 
         # Parse 1 to plot the first dcm file
-        test = self.plot_dcm(1)
-        print("test: " + str(test))
+        self.plot_dcm(1)
         # Update slider
         self.slider.setEnabled(True)
         self.slider.setMaximum(self.paths_model.path_count())
