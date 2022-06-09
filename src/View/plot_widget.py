@@ -31,6 +31,7 @@ file_handler = logging.FileHandler('../../logs/plot_widget.log', mode='w')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+allDCM = []
 
 class PlotWidget(QWidget):
     """
@@ -82,9 +83,16 @@ class PlotWidget(QWidget):
         self.paths_model.paths.clear()
         self.paths_model.paths.extend(paths)
 
-        # Parse 1 to plot the first dcm file
-        self.plot_dcm(1)
 
+        #load all files
+        for path in paths:
+            allDCM.append(pydicom.dcmread(path))
+
+        allDCM.sort(key=lambda ds: float(ds.get_item((0x0020, 0x1041)).value), reverse=True)
+
+        # Parse 1 to plot the first dcm file
+        test = self.plot_dcm(1)
+        print("test: " + str(test))
         # Update slider
         self.slider.setEnabled(True)
         self.slider.setMaximum(self.paths_model.path_count())
@@ -93,7 +101,8 @@ class PlotWidget(QWidget):
 
         return bool(self.paths_model)
 
-    def plot_dcm(self, value):
+    def plot_dcm(self, value, data_source=None):
+        data_source = allDCM[value - 1]
         """
         Plots the dcm file in the axes and view
         """
@@ -103,7 +112,7 @@ class PlotWidget(QWidget):
 
         try:
             logger.info("Attempting to graph/open file (%s)", path)
-            return self.open_dicom_file(path, False)
+            return self.open_dicom_file(path, False, data_source)
 
         except pydicom.errors.InvalidDicomError as err:
             response = self.display_err_msg("Error", 'InvalidDicomError, Missing Dicom Header. \n\nError: '
@@ -132,10 +141,12 @@ class PlotWidget(QWidget):
         msg.exec()
         logger.info("Unable to open graph/file")
 
-    def open_dicom_file(self, path, force):
+    def open_dicom_file(self, path, force, data_source=None):
         """Opens dicom file"""
         logger.info("Attempting to graph/open file (%s)", path)
-        data_source = pydicom.dcmread(path, force=force)
+        if data_source is None:
+            data_source = pydicom.dcmread(path, force=force)
+
         if "TransferSyntaxUID" not in data_source.file_meta and force:
             data_source.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
         self.axes.clear()
