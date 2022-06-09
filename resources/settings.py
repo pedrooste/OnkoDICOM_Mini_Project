@@ -33,13 +33,27 @@ def load_settings(user_id):
         return Settings()
 
 
+def save_settings(settings):
+    """Saves settings to the DB"""
+    database = SettingsConnection()
+
+    try:
+        db_result = database.insert_or_update_setting(settings)
+        if db_result is False:
+            raise AttributeError("Could not insert or update settings into database")
+        return True
+    except (AttributeError, TypeError) as err:
+        logging.warning(err)
+        return False
+
+
 class Settings:
     """Stores settings used throughout the program"""
 
     def __init__(self, user_id=1, window_x=500, window_y=500, force_open=False, dicom_path=''):
         self.user_id = user_id
-        self.window_x = window_x
-        self.window_y = window_y
+        self.window_x = window_x if window_x >= 500 else 500
+        self.window_y = window_y if window_y >= 500 else 500
         self.force_open = force_open
         self.dicom_path = dicom_path
 

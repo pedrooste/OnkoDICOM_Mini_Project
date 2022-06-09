@@ -3,7 +3,7 @@ import os
 import platform
 
 
-def setup_configuration():
+def setup_hidden_dir():
     """Setups the configuration for hidden directory"""
     dir_path = os.path.expanduser(r"~\.ONKO_HIDDEN_DICOM")
     os.environ['DICOM_HIDDEN_DIR'] = dir_path

@@ -10,8 +10,12 @@ from PySide6.QtWidgets import (
     QMainWindow,
 )
 from src.View import plot_widget
-from resources.settings import load_settings
+from resources.settings import (
+    load_settings,
+    save_settings
+)
 from src.View.menu_bar import MenuBar
+from src.configuration import setup_hidden_dir
 
 LOG_FILES_DIR = '../logs'
 if not os.path.isdir(LOG_FILES_DIR):
@@ -34,8 +38,10 @@ class OnkoDicom(QMainWindow):
     def __init__(self):
         super().__init__()
         logger.info("Initialising OnkoDicom")
+        setup_hidden_dir()
         self.settings = load_settings(1)
 
+        self.setMinimumSize(500, 500)
         self.resize(self.settings.window_x, self.settings.window_y)
         self.show()
 
@@ -48,6 +54,9 @@ class OnkoDicom(QMainWindow):
         self.setCentralWidget(self.plot_w)
 
         logger.info("Initialising OnkoDicom completed")
+
+    def __del__(self):
+        save_settings(self.settings)
 
 
 if __name__ == "__main__":

@@ -51,6 +51,9 @@ class MenuBar(QtWidgets.QMenuBar):
         """Opens a file import window"""
         logger.info("open_dir started within OnkoDicom")
 
+        if os.path.isdir(self.onko_dicom.settings.dicom_path) is False:
+            self.onko_dicom.settings.dicom_path = ''
+
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory", self.onko_dicom.settings.dicom_path))
         files = os.path.join(directory, "*.dcm").replace("\\", "/")
         paths = sorted(glob.glob(files))
@@ -59,6 +62,9 @@ class MenuBar(QtWidgets.QMenuBar):
         if not paths:
             logger.info("open_dir user canceled open operation")
             return
+
+        # Saves parent directory of the opened subdirectory to use as open dialog default
+        self.onko_dicom.settings.dicom_path = os.path.split(directory)[0]
 
         self.onko_dicom.plot_w.set_paths(paths)
         self.close_action.setEnabled(True)

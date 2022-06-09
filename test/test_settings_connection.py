@@ -36,8 +36,8 @@ def test_insert_entry():
     setting = Settings(1, 500, 600, True, 'path')
     setting2 = Settings(1, 700, 800, False, 'path')
 
-    assert conn.insert_setting(setting) == 1
-    assert conn.insert_setting(setting2) is False
+    assert conn.insert_or_update_setting(setting) == 1
+    assert conn.insert_or_update_setting(setting2) is False
 
 
 def test_get_setting():

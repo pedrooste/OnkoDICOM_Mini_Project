@@ -13,7 +13,7 @@ def test_setup():
     """ Testing Db setup"""
     conn = SettingsConnection()
     setting = Settings(1, 500, 600, True, 'path')
-    assert conn.insert_setting(setting) == 1
+    assert conn.insert_or_update_setting(setting) == 1
 
 
 def test_load_settings():

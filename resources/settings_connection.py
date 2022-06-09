@@ -48,7 +48,7 @@ class SettingsConnection:
     """Maintains DB conection and actions for settings"""
 
     def __init__(self):
-        self.connection = connect("pythonsqlite.db")
+        self.connection = connect(os.path.join(os.environ['DICOM_HIDDEN_DIR'], "python_sqlite.db"))
 
         # constructing settings
         construct_table(self.connection,
@@ -60,16 +60,20 @@ class SettingsConnection:
                                    dicom_path varchar
                                );""")
 
-    def insert_setting(self, settings):
-        """ Insert setting """
-        sql = '''INSERT INTO SETTINGS(user_id,window_x,window_y,force_open,dicom_path)VALUES(?,?,?,?,?)'''
+    def insert_or_update_setting(self, settings):
+        """ Insert new or Update existing setting """
+        sql = '''INSERT INTO SETTINGS(user_id, window_x, window_y, force_open, dicom_path) VALUES(?,?,?,?,?)
+                 ON CONFLICT(user_id) DO UPDATE SET window_x=excluded.window_x,
+                                                    window_y=excluded.window_y,
+                                                    force_open=excluded.force_open,
+                                                    dicom_path=excluded.dicom_path'''
         cur = self.connection.cursor()
         try:
             cur.execute(sql,
                         [settings.user_id, settings.window_x, settings.window_y, settings.force_open,
                          settings.dicom_path])
         except Error as err:
-            logger.warning("Could not insert settings: %s", err)
+            logger.warning("Could not insert or update settings: %s", err)
             return False
 
         self.connection.commit()
@@ -88,14 +92,14 @@ class SettingsConnection:
 
         return ret
 
-    def delete_setting(self, iden):
+    def delete_setting(self, user_id):
         """ delete setting """
         sql = '''DELETE FROM SETTINGS WHERE user_id = ?'''
 
         cursor = self.connection.cursor()
 
         try:
-            cursor.execute(sql, (iden,))
+            cursor.execute(sql, (user_id,))
         except Error as err:
             logger.warning("Could not delete settings: %s", err)
             return False

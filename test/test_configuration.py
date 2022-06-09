@@ -1,7 +1,7 @@
 """This document is to test loading the settings"""
-from src.configuration import setup_configuration
+from src.configuration import setup_hidden_dir
 
 
 def test_configuration():
     """Configuration function can run"""
-    setup_configuration()
+    setup_hidden_dir()
