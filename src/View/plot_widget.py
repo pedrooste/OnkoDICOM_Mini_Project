@@ -86,7 +86,25 @@ class PlotWidget(QWidget):
 
         #load all files
         for path in paths:
-            allDCM.append(pydicom.dcmread(path))
+            try:
+                data = pydicom.dcmread(path)
+                allDCM.append(data)
+            except pydicom.errors.InvalidDicomError as err:
+                response = self.display_err_msg("Error", 'InvalidDicomError, Missing Dicom Header. \n\nError: '
+                                                + '<br>'.join([str(err)]))
+                if response:
+                    logger.info("force_plot_dcm started within PlotWidget")
+                self.open_dicom_file(path, True)
+
+                self.display_dialog()
+
+            except NotImplementedError as err:
+                logger.info(
+                    "Error, see related information https://pydicom.github.io/pydicom/stable/old/image_data_handlers.html")
+
+            except (AttributeError, Exception) as err:
+                logger.error("(%s): Error:(%s)", path, err)
+                self.display_dialog()
 
         allDCM.sort(key=lambda ds: float(ds.get_item((0x0020, 0x1041)).value), reverse=True)
 
@@ -104,7 +122,7 @@ class PlotWidget(QWidget):
     def plot_dcm(self, value, data_source=None):
         data_source = allDCM[value - 1]
         """
-        Plots the dcm file in the axes and view
+        Plots the dcm file in the axes and views
         """
         logger.info("plot_dcm started within PlotWidget")
 
