@@ -27,8 +27,7 @@ def test_load_settings():
 
 def test_load_default_settings():
     """When loading settings that dont exist, the default settings will be returned"""
-    # assert load_settings(4).log_settings() == Settings(1, 400, 500, False, '').log_settings()
-    assert load_settings(4).is_default()
+    assert load_settings(4).log_settings() == Settings(1, 400, 500, False, '').log_settings()
 
 
 def test_save_settings():

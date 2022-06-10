@@ -19,3 +19,8 @@ def test_startup(test_app):
     """Tests window startup, ensuring it runs"""
     assert test_app.windowTitle() == "OnkoDICOM 2022 Mini Project"
     assert test_app.plot_w
+
+
+def test_close_event(test_app):
+    """Tests close event of window"""
+    assert test_app.closeEvent()
