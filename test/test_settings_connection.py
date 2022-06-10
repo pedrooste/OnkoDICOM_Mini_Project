@@ -29,21 +29,22 @@ def test_createtable():
     assert construct_table(conn.connection, table)
 
 
-def test_insert_entry():
+def test_insert_and_update_entry():
     """ Insert settings Test """
     conn = SettingsConnection()
 
     setting = Settings(1, 500, 600, True, 'path')
-    setting2 = Settings(1, 700, 800, False, 'path')
+    setting2 = Settings(1, 700, 800, False, 'path2')
 
     assert conn.insert_or_update_setting(setting) == 1
-    assert conn.insert_or_update_setting(setting2) is False
+    conn.insert_or_update_setting(setting2)
+    assert conn.get_setting(1) == (1, 700, 800, False, 'path2')
 
 
 def test_get_setting():
     """ Get Setting Test """
     conn = SettingsConnection()
-    assert conn.get_setting(1) == (1, 500, 600, True, 'path')
+    assert conn.get_setting(1) == (1, 700, 800, False, 'path2')
     assert conn.get_setting(2) is None
 
 
