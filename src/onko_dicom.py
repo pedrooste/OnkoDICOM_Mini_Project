@@ -8,6 +8,7 @@ import sys
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import (
     QMainWindow,
+    QMessageBox
 )
 from src.View import plot_widget
 from resources.settings import (
@@ -55,8 +56,24 @@ class OnkoDicom(QMainWindow):
 
         logger.info("Initialising OnkoDicom completed")
 
-    def __del__(self):
-        save_settings(self.settings)
+    def closeEvent(self, event):
+        self.settings.window_x = self.width()
+        self.settings.window_y = self.height()
+
+        if not self.settings.is_default():
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("Save Settings")
+            msg_box.setIcon(QMessageBox.Question)
+            msg_box.setText("Your program settings have been changed.")
+            msg_box.setInformativeText("Do you want to save your changes?")
+            msg_box.setStandardButtons(QMessageBox.Save | QMessageBox.Discard)
+            msg_box.setDefaultButton(QMessageBox.Save)
+            ret = msg_box.exec()
+            if ret == QMessageBox.Save:
+                save_settings(self.settings)
+                logger.info("User Settings saved")
+            else:
+                logger.info("User Settings discarded")
 
 
 if __name__ == "__main__":

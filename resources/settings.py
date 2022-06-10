@@ -65,3 +65,11 @@ class Settings:
             "id: %s, window: %sx %sy, force open: %s, DICOM path: %s",
             self.user_id, self.window_x, self.window_y, self.force_open, self.dicom_path
         )
+
+    def is_default(self):
+        if (self.window_x != 500
+                or self.window_y != 500
+                or self.force_open is not False
+                or self.dicom_path != ''):
+            return False
+        return True
