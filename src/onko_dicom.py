@@ -77,7 +77,6 @@ class OnkoDicom(QMainWindow):
 
 
 if __name__ == "__main__":
-
     app = QtWidgets.QApplication([])
     OnkoDicom()
     sys.exit(app.exec())

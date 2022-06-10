@@ -1,5 +1,9 @@
 """This document is to test loading the settings"""
-from resources.settings import Settings, load_settings
+from resources.settings import (
+    Settings,
+    load_settings,
+    save_settings
+)
 from resources.settings_connection import SettingsConnection
 
 
@@ -24,3 +28,9 @@ def test_load_settings():
 def test_load_default_settings():
     """When loading settings that dont exist, the default settings will be returned"""
     assert load_settings(4).log_settings() == Settings(1, 400, 500, False, '').log_settings()
+
+
+def test_save_settings():
+    """Testing that a settings object can be inserted or update with the save function"""
+    setting = Settings(1, 800, 800, True, 'path2')
+    assert save_settings(setting) is True
