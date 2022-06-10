@@ -21,6 +21,7 @@ def test_startup(test_app):
     assert test_app.plot_w
 
 
-def test_close_event(test_app):
+def test_close_event(qtbot, test_app):
     """Tests close event of window"""
-    assert test_app.closeEvent()
+    with qtbot.waitSignal(test_app.closeEvent(), raising=True):
+        test_app.exec()
