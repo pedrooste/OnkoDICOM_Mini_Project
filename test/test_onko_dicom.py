@@ -19,9 +19,3 @@ def test_startup(test_app):
     """Tests window startup, ensuring it runs"""
     assert test_app.windowTitle() == "OnkoDICOM 2022 Mini Project"
     assert test_app.plot_w
-
-
-def test_close_event(qtbot, test_app):
-    """Tests close event of window"""
-    with qtbot.waitSignal(test_app.closeEvent(event=qtbot.stop()), raising=True):
-        test_app.exec()
