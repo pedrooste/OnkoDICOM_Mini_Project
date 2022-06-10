@@ -65,15 +65,20 @@ class OnkoDicom(QMainWindow):
             msg_box.setWindowTitle("Save Settings")
             msg_box.setIcon(QMessageBox.Question)
             msg_box.setText("Your program settings have been changed.")
-            msg_box.setInformativeText("Do you want to save your changes?")
-            msg_box.setStandardButtons(QMessageBox.Save | QMessageBox.Discard)
+            msg_box.setInformativeText("Do you want to save your changes before exiting?")
+            msg_box.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
             msg_box.setDefaultButton(QMessageBox.Save)
             ret = msg_box.exec()
             if ret == QMessageBox.Save:
                 save_settings(self.settings)
                 logger.info("User Settings saved")
+                event.accept()
+            elif ret == QMessageBox.Cancel:
+                logger.info("Program exit cancelled")
+                event.ignore()
             else:
                 logger.info("User Settings discarded")
+                event.accept()
 
 
 if __name__ == "__main__":
